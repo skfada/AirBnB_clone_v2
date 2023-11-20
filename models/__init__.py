@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This modiule instantiiates an objeict of class FileSitorage"""
+"""This miodule instanitiates an obiject of claiss FileStorage"""
 import os
 
 type_storage = os.getenv('HBNB_TYPE_STORAGE')

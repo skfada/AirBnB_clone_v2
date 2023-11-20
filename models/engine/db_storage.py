@@ -4,17 +4,16 @@ Database storage engine using SQLAlchemy
 with a mysql+mysqldb database connection.
 """
 
+from models.review import Review
+import os
 from models.base_model import Base
 from models.amenity import Amenity
 from models.city import City
+from sqlalchemy.orm import sessionmaker, scoped_session
 from models.place import Place
 from models.state import State
-from models.review import Review
 from models.user import User
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-import os
-
 name2class = {
     'Amenity': Amenity,
     'City': City,
@@ -41,35 +40,6 @@ class DBStorage:
         if os.getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
-    def delete(self, obj=None):
-        """deletes an object"""
-        if not self.__session:
-            self.reload()
-        if obj:
-            self.__session.delete(obj)
-
-    def close(self):
-        """Dispose of current session if active"""
-        self.__session.remove()
-
-    def get(self, cls, id):
-        """Retrieve an object"""
-        if cls is not None and type(cls) is str and id is not None and\
-           type(id) is str and cls in name2class:
-            cls = name2class[cls]
-            result = self.__session.query(cls).filter(cls.id == id).first()
-            return result
-        else:
-            return None
-
-    def new(self, obj):
-        """creates a new object"""
-        self.__session.add(obj)
-
-    def save(self):
-        """saves the current session"""
-        self.__session.commit()
-
     def all(self, cls=None):
         """returns a dictionary of all the objects present"""
         if not self.__session:
@@ -86,12 +56,19 @@ class DBStorage:
                     objects[obj.__class__.__name__ + '.' + obj.id] = obj
         return objects
 
-    def reload(self):
-        """reloads objects from the database"""
-        session_factory = sessionmaker(bind=self.__engine,
-                                       expire_on_commit=False)
-        Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(session_factory)
+    def close(self):
+        """Dispose of current session if active"""
+        self.__session.remove()
+
+    def get(self, cls, id):
+        """Retrieve an object"""
+        if cls is not None and type(cls) is str and id is not None and\
+           type(id) is str and cls in name2class:
+            cls = name2class[cls]
+            result = self.__session.query(cls).filter(cls.id == id).first()
+            return result
+        else:
+            return None
 
     def count(self, cls=None):
         """Count number of objects in storage"""
@@ -103,3 +80,25 @@ class DBStorage:
             for cls in name2class.values():
                 total += self.__session.query(cls).count()
         return total
+
+    def reload(self):
+        """reloads objects from the database"""
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
+        Base.metadata.create_all(self.__engine)
+        self.__session = scoped_session(session_factory)
+
+    def new(self, obj):
+        """creates a new object"""
+        self.__session.add(obj)
+
+    def save(self):
+        """saves the current session"""
+        self.__session.commit()
+
+    def delete(self, obj=None):
+        """deletes an object"""
+        if not self.__session:
+            self.reload()
+        if obj:
+            self.__session.delete(obj)

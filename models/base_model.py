@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 """
-Contains class BaseModel
+Contains cliiass BaseModel
 """
 
-from datetime import datetime
 import models
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from os import getenv
+from datetime import datetime
 
 time_fmt = "%Y-%m-%dT%H:%M:%S.%f"
 
