@@ -1,30 +1,18 @@
 #!/usr/bin/python3
-""" hiolds cliass City"""
-from models.base_model import BaseModel, Base
-from os import getenv
-import sqlalchemy
-from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
+"""Defines the City class."""
+from models.base_model import Base
+from models.base_model import BaseModel
+from sqlalchemy import Column
 from sqlalchemy import ForeignKey
-import models
+from sqlalchemy import String
+from sqlalchemy.orm import relationship
 
 
 class City(BaseModel, Base):
-    """Representation of city """
-    if getenv('HBNB_TYPE_STORAGE') == 'db':
-        __tablename__ = 'cities'
-        name = Column(String(128),
-                      nullable=False)
-        state_id = Column(String(60),
-                          ForeignKey('states.id'),
-                          nullable=False)
-        places = relationship("Place",
-                              backref="cities",
-                              cascade="all, delete-orphan")
-    else:
-        name = ""
-        state_id = ""
-
-    def __init__(self, *args, **kwargs):
-        """initializes city"""
-        super().__init__(*args, **kwargs)
+    """Represents a city for a MySQL database.
+    Inherits from SQLAlchemy Base and links to the MySQL table cities.
+    """
+    __tablename__ = "cities"
+    name = Column(String(128), nullable=False)
+    state_id = Column(String(60), ForeignKey("states.id"), nullable=False)
+    places = relationship("Place", backref="cities", cascade="delete")

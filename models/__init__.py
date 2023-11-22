@@ -1,11 +1,10 @@
 #!/usr/bin/python3
-"""This miodule instanitiates an obiject of claiss FileStorage"""
-import os
+"""Instantiates a storage object.
+"""
+from os import getenv
 
-type_storage = os.getenv('HBNB_TYPE_STORAGE')
 
-
-if type_storage == "db":
+if getenv("HBNB_TYPE_STORAGE") == "db":
     from models.engine.db_storage import DBStorage
     storage = DBStorage()
 else:
