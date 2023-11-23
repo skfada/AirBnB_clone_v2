@@ -12,6 +12,7 @@ from models.user import User
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
@@ -27,7 +28,7 @@ class FileStorage:
         """returns the dictionary __objects"""
         if not cls:
             return self.__objects
-        elif type(cls) == str:
+        elif type(cls) is str:
             return {k: v for k, v in self.__objects.items()
                     if v.__class__.__name__ == cls}
         else:
@@ -67,6 +68,6 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
